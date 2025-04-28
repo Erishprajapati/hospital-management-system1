@@ -14,7 +14,7 @@ class Patient(models.Model):
     phone = models.CharField(max_length=15)
     email = models.EmailField()
     address = models.CharField(max_length=20)
-    emergency_contact = models.IntegerField()
+    emergency_contact = models.CharField(max_length=15)
     blood_group = models.CharField(max_length=5)
     allergies = models.TextField(blank = True, null = True)
     medical_history = models.TextField(blank = True, null = True)
