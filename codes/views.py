@@ -53,7 +53,7 @@ def patient_login(request):
             if patient.password == password:
                 """where to redirect if the login is successful"""
                 request.session['patient_id'] = patient.id
-                return redirect('home')
+                return redirect('patient_dashboard')
             else:
                 messages.error(request, "Incorrect credentials")
         except Patient.DoesNotExist:
@@ -65,10 +65,10 @@ def doctor_login(request):
         email =  request.POST.get('email')
         password = request.POST.get('password')
         try: 
-            doctor = Doctor.object.get(email = email)
+            doctor = Doctor.objects.get(email = email)
             if doctor.password == password:
                 request.session['doctor_id'] = doctor.id 
-                return redirect('home')
+                return redirect('doctor_dashboard')
             else:
                 messages.error(request, 'Invalid credentials')
         except Doctor.DoesNotExist:
@@ -90,3 +90,56 @@ def doctor_login(request):
 #         except Doctor.DoesNotExist:
 #             messages.error(request, "Doctor not found")
 #     return render(request, 'login.html')
+
+def doctor_dashboard(request):
+    doctor_id = request.session.get('doctor_id')
+    if not doctor_id:
+        return redirect('doctor_login')  # Redirect if not logged in
+
+    doctor = Doctor.objects.get(id=doctor_id)
+    return render(request, 'doctor_dashboard.html', {'doctor': doctor})
+
+def patient_dashboard(request):
+    patient_id = request.session.get('patient_id')
+    if not patient_id:
+        return redirect('patient_login')  # Redirect if not logged in
+
+    patient = Patient.objects.get(id=patient_id)
+    return render(request, 'patient_dashboard.html', {'patient': patient})
+
+
+
+def logout_view(request):
+    request.session.flush()
+    return redirect('home')
+
+
+def login_view(request):
+    if request.method == "POST":
+        user_type = request.POST.get('user_type')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        if user_type == 'patient':
+            try:
+                patient = Patient.objects.get(email=email)
+                if patient.password == password:
+                    request.session['patient_id'] = patient.id
+                    return redirect('patient_dashboard')  # Redirect to patient dashboard
+                else:
+                    messages.error(request, "Incorrect patient credentials")
+            except Patient.DoesNotExist:
+                messages.error(request, "Patient not found")
+
+        elif user_type == 'doctor':
+            try:
+                doctor = Doctor.objects.get(email=email)
+                if doctor.password == password:
+                    request.session['doctor_id'] = doctor.id
+                    return redirect('doctor_dashboard')  # Redirect to doctor dashboard
+                else:
+                    messages.error(request, "Incorrect doctor credentials")
+            except Doctor.DoesNotExist:
+                messages.error(request, "Doctor not found")
+
+    return render(request, 'login.html')
