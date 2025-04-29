@@ -4,6 +4,8 @@ from .forms import *
 from django.contrib import messages
 
 
+def home(request):
+    return render(redirect, 'home.html')
 def success_page(request):
     return render(request, 'success.html')  # Renders success.html page
 
@@ -32,3 +34,59 @@ def view_doctor(request):
         form = DoctorForm()
     
     return render(request, 'doctorinfo.html', {'form': form})
+
+def list_patients(request):
+    patients = Patient.objects.all()
+    return render(request, 'patient_list.html', {'patients': patients})
+
+def list_doctors(request):
+    doctors = Doctor.objects.all()
+    return render(request, 'doctors_list.html', {'doctors': doctors})
+
+
+def patient_login(request):
+    if request.method == "POST":
+        email = request.POST.get('email')
+        password = request.POST.get("password")
+        try:
+            patient = Patient.objects.get(email = email)
+            if patient.password == password:
+                """where to redirect if the login is successful"""
+                request.session['patient_id'] = patient.id
+                return redirect('home')
+            else:
+                messages.error(request, "Incorrect credentials")
+        except Patient.DoesNotExist:
+            messages.error(request, "Patient not found!!!")
+    return render(request, 'login.html')
+
+def doctor_login(request):
+    if request.method ==  "POST":
+        email =  request.POST.get('email')
+        password = request.POST.get('password')
+        try: 
+            doctor = Doctor.object.get(email = email)
+            if doctor.password == password:
+                request.session['doctor_id'] = doctor.id 
+                return redirect('home')
+            else:
+                messages.error(request, 'Invalid credentials')
+        except Doctor.DoesNotExist:
+            messages.error(request, " Doctor not found")
+    return render(request, 'login.html')
+
+
+# def doctor_login(request):
+#     if request.method == "POST":
+#         email = request.POST.get('email')
+#         password = request.POST.get('password')
+#         try: 
+#             doctor = Doctor.objects.get(email=email)
+#             if doctor.password == password:
+#                 request.session['doctor_id'] = doctor.id  # fixed key name too
+#                 return redirect('home')
+#             else:
+#                 messages.error(request, 'Invalid credentials')
+#         except Doctor.DoesNotExist:
+#             messages.error(request, "Doctor not found")
+#     return render(request, 'login.html')

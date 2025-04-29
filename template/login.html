@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Login</h2>
+<form method="POST">
+  {% csrf_token %}
+  
+  <!-- Choose user type -->
+  <label>User Type:</label><br>
+  <input type="radio" id="doctor" name="user_type" value="doctor">
+  <label for="doctor">Doctor</label><br>
+  <input type="radio" id="patient" name="user_type" value="patient" checked>
+  <label for="patient">Patient</label><br><br>
+
+  <label>Email:</label><br>
+  <input type="email" name="email" required><br><br>
+
+  <label>Password:</label><br>
+  <input type="password" name="password" required><br><br>
+
+  <button type="submit">Login</button>
+</form>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Welcome to the Patient Dashboard</h2>
+
+<p>Hello, patient! You are logged in successfully.</p>
+
+<ul>
+  <li><a href="{% url 'doctors_list' %}">View All Doctors</a></li>
+</ul>
+
+{% endblock %}
