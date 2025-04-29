@@ -49,9 +49,10 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     appointment_date = models.DateField()
     appointment_time = models.TimeField()
-    status = models.CharField(choices=status_choices, max_length=4)
+    status = models.CharField(choices=status_choices, max_length=4, default = 'P')
     reason_for_visit = models.CharField(max_length=100)
     notes = models.CharField(max_length=100)
+    is_approved = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.patient} has {self.appointment_date} with {self.doctor}"

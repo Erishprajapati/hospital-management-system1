@@ -1,12 +1,58 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Welcome to the Patient Dashboard</h2>
+<h2>Welcome to the Dashboard</h2>
 
-<p>Hello, patient! You are logged in successfully.</p>
+{% if request.session.patient_id %}
+    <p>Hello, patient! You are logged in successfully.</p>
 
-<ul>
-  <li><a href="{% url 'doctors_list' %}">View All Doctors</a></li>
-</ul>
+    <h4>All Available Doctors:</h4>
+    <ul id="doctor-list">
+        <!-- Doctors will be injected here -->
+    </ul>
 
+    <script>
+      fetch('/api/doctors/')  // <-- your API URL
+        .then(response => response.json())
+        .then(data => {
+          const list = document.getElementById('doctor-list');
+          data.forEach(doctor => {
+            const li = document.createElement('li');
+            li.textContent = `${doctor.name} (${doctor.specialization})`;
+            list.appendChild(li);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching doctors:', error);
+        });
+    </script>
+
+{% elif request.session.doctor_id %}
+    <p>Hello, doctor! You are logged in successfully.</p>
+
+    <h4>Your Appointments:</h4>
+    <!-- Show doctor-specific data like appointments here -->
+    <ul id="appointments-list">
+        <!-- Appointments will be injected here -->
+    </ul>
+
+    <script>
+      fetch('/api/appointments/')  // <-- your API URL for doctor appointments
+        .then(response => response.json())
+        .then(data => {
+          const list = document.getElementById('appointments-list');
+          data.forEach(appointment => {
+            const li = document.createElement('li');
+            li.textContent = `Appointment with ${appointment.patient_name} on ${appointment.date}`;
+            list.appendChild(li);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching appointments:', error);
+        });
+    </script>
+
+{% else %}
+    <p>Please log in to access your dashboard.</p>
+{% endif %}
 {% endblock %}

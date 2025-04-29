@@ -3,10 +3,11 @@
 {% block content %}
 <h2>Welcome to the Patient Dashboard</h2>
 
-<p>Hello, Doctor! You are logged in successfully.</p>
+<p>You are logged in as Patient ID: {{ request.session.patient_id }}</p>
 
 <ul>
-  <li><a href="{% url 'doctors_list' %}">View All Doctors</a></li>
+  <li><a href="{% url 'list_doctors_api' %}">View All Doctors</a></li>
+  <li><a href="{% url 'appointment_form' %}">Add Appointments</a></li>
 </ul>
 
 {% endblock %}
