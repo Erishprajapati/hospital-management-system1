@@ -5,15 +5,16 @@ from .forms import *
 from django.contrib import messages
 from rest_framework.decorators import api_view
 from .serializers import *
+from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
 # from django.contrib.auth.models import user
 
 def home(request):
     if request.session.get('patient_id'):
-        return redirect('patient_dashboard')
+        return redirect('login_view')
     elif request.session.get('doctor_id'):
-        return redirect('doctor_dashboard')
+        return redirect('login_view')
     else:
         return render(request, 'home.html')
 
@@ -59,21 +60,21 @@ def list_doctor_api(request):
     return Response(serializer.data)
 
 
-def patient_login(request):
-    if request.method == "POST":
-        email = request.POST.get('email')
-        password = request.POST.get("password")
-        try:
-            patient = Patient.objects.get(email = email)
-            if patient.password == password:
-                """where to redirect if the login is successful"""
-                request.session['patient_id'] = patient.id
-                return redirect('patient_dashboard')
-            else:
-                messages.error(request, "Incorrect credentials")
-        except Patient.DoesNotExist:
-            messages.error(request, "Patient not found!!!")
-    return render(request, 'login.html')
+# def patient_login(request):
+#     if request.method == "POST":
+#         email = request.POST.get('email')
+#         password = request.POST.get("password")
+#         try:
+#             patient = Patient.objects.get(email = email)
+#             if patient.password == password:
+#                 """where to redirect if the login is successful"""
+#                 request.session['patient_id'] = patient.id
+#                 return redirect('patient_dashboard')
+#             else:
+#                 messages.error(request, "Incorrect credentials")
+#         except Patient.DoesNotExist:
+#             messages.error(request, "Patient not found!!!")
+#     return render(request, 'login.html')
 
 # def patient_register(request):
 #     if request.method == 'POST':
@@ -121,20 +122,20 @@ def patient_register(request):
 
 
 
-def doctor_login(request):
-    if request.method ==  "POST":
-        email =  request.POST.get('email')
-        password = request.POST.get('password')
-        try: 
-            doctor = Doctor.objects.get(email = email)
-            if doctor.password == password:
-                request.session['doctor_id'] = doctor.id 
-                return redirect('doctor_dashboard')
-            else:
-                messages.error(request, 'Invalid credentials')
-        except Doctor.DoesNotExist:
-            messages.error(request, " Doctor not found")
-    return render(request, 'login.html')
+# def doctor_login(request):
+#     if request.method ==  "POST":
+#         email =  request.POST.get('email')
+#         password = request.POST.get('password')
+#         try: 
+#             doctor = Doctor.objects.get(email = email)
+#             if doctor.password == password:
+#                 request.session['doctor_id'] = doctor.id 
+#                 return redirect('doctor_dashboard')
+#             else:
+#                 messages.error(request, 'Invalid credentials')
+#         except Doctor.DoesNotExist:
+#             messages.error(request, " Doctor not found")
+#     return render(request, 'login.html')
 
 @api_view(['GET', 'POST'])
 def appointment_api(request):
@@ -161,15 +162,17 @@ def approve_appointment(request, appointment_id):
     appointment.save()
     return Response({'message': 'Appointment approved succesfully'})
 
+@login_required
 def book_appointment(request):
     if request.method == "POST":
         try:
             patient = Patient.objects.get(user=request.user)  # Assuming OneToOneField with User
         except Patient.DoesNotExist:
             messages.error(request, "Patient not found.")
-            return redirect('login')
+            return redirect('patient_dashboard')
 
         # Extract POST data
+        
         appointment_date_str = request.POST.get('appointment_date')
         appointment_time = request.POST.get('appointment_time')
         doctor_id = request.POST.get('doctor')
@@ -199,7 +202,7 @@ def book_appointment(request):
         )
 
         messages.success(request, "Appointment booked successfully!")
-        return redirect('patient_dashboard')
+        return redirect('doctor_dashboard')
 
     else:
         form = AppointmentForm(initial={'patient': request.user.id})

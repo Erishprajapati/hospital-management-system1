@@ -8,6 +8,7 @@ gender_choices = [
     ('U', 'Unknown')
 ]
 class Patient(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null = True)
     name = models.CharField(max_length=100)
     dateofbirth = models.DateField()
     gender = models.CharField(choices=gender_choices, max_length=10)
