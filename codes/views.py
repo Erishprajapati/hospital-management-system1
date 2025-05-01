@@ -59,54 +59,6 @@ def list_doctor_api(request):
     serializer = DoctorSerializer(doctors, many = True)
     return Response(serializer.data)
 
-
-# def patient_login(request):
-#     if request.method == "POST":
-#         email = request.POST.get('email')
-#         password = request.POST.get("password")
-#         try:
-#             patient = Patient.objects.get(email = email)
-#             if patient.password == password:
-#                 """where to redirect if the login is successful"""
-#                 request.session['patient_id'] = patient.id
-#                 return redirect('patient_dashboard')
-#             else:
-#                 messages.error(request, "Incorrect credentials")
-#         except Patient.DoesNotExist:
-#             messages.error(request, "Patient not found!!!")
-#     return render(request, 'login.html')
-
-# def patient_register(request):
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         gender = request.POST.get('gender')
-#         phone = request.POST.get('phone')
-#         email = request.POST.get('email')
-#         password = request.POST.get('password')
-#         emergency_contact = request.POST.get('emergency_contact')
-#         date_of_birth = request.POST.get('date_of_birth')
-
-#         if not(name and phone and email and password):
-#             messages.error(request, "Please fill the fields")
-#             return redirect('patient_register')
-        
-#         if Patient.objects.filter(email = email).exists():
-#             messages.error(request, "Email already registered")
-#             return redirect('patient_register')
-        
-#         patient = Patient(
-#             name = name,
-#             gender = gender,
-#             phone = phone,
-#             email = email,
-#             password = password,
-#             emergency_contact = emergency_contact,
-#             date_of_birth = date_of_birth
-#         )
-#         patient.save()
-
-        
-
 def patient_register(request):
     if request.method == 'POST':
         form = PatientRegistrationForm(request.POST)
@@ -119,23 +71,6 @@ def patient_register(request):
     else:
         form = PatientRegistrationForm()
     return render(request, 'patient_register.html', {'form': form})
-
-
-
-# def doctor_login(request):
-#     if request.method ==  "POST":
-#         email =  request.POST.get('email')
-#         password = request.POST.get('password')
-#         try: 
-#             doctor = Doctor.objects.get(email = email)
-#             if doctor.password == password:
-#                 request.session['doctor_id'] = doctor.id 
-#                 return redirect('doctor_dashboard')
-#             else:
-#                 messages.error(request, 'Invalid credentials')
-#         except Doctor.DoesNotExist:
-#             messages.error(request, " Doctor not found")
-#     return render(request, 'login.html')
 
 @api_view(['GET', 'POST'])
 def appointment_api(request):
@@ -165,31 +100,33 @@ def approve_appointment(request, appointment_id):
 @login_required
 def book_appointment(request):
     if request.method == "POST":
-        try:
-            patient = Patient.objects.get(user=request.user)  # Assuming OneToOneField with User
-        except Patient.DoesNotExist:
-            messages.error(request, "Patient not found.")
-            return redirect('patient_dashboard')
+        # try:
+        #     patient = Patient.objects.get(user=request.user)  # Assuming OneToOneField with User
+        # except Patient.DoesNotExist:
+        #     messages.error(request, "Patient not found.")
+        #     return redirect('patient_dashboard')
 
-        # Extract POST data
+        # # Extract POST data
         
-        appointment_date_str = request.POST.get('appointment_date')
+        appointment_date = request.POST.get('appointment_date')
         appointment_time = request.POST.get('appointment_time')
         doctor_id = request.POST.get('doctor')
         reason = request.POST.get('reason_for_visit')
         notes = request.POST.get('notes')
+        patient = Patient.objects.get(user=request.user) 
+        
 
-        # Validate date format
-        try:
-            appointment_date = datetime.strptime(appointment_date_str, "%Y-%m-%d").date()
-        except ValueError:
-            messages.error(request, "Invalid date format. Please select a valid date.")
-            return render(request, 'add_appointment.html')
+        # # Validate date format
+        # try:
+        #     appointment_date = datetime.strptime(appointment_date_str, "%Y-%m-%d").date()
+        # except ValueError:
+        #     messages.error(request, "Invalid date format. Please select a valid date.")
+        #     return render(request, 'add_appointment.html')
 
         # Check for past date
-        if appointment_date < datetime.now().date():
-            messages.error(request, "You cannot select a past date for the appointment.")
-            return render(request, 'add_appointment.html')
+        # if appointment_date < datetime.now().date():
+        #     messages.error(request, "You cannot select a past date for the appointment.")
+        #     return render(request, 'add_appointment.html')
 
         # Save appointment
         Appointment.objects.create(
@@ -219,7 +156,6 @@ def doctor_dashboard(request):
     doctor_id = request.session.get('doctor_id')
     if not doctor_id:
         return redirect('doctor_login')  # Redirect if not logged in
-
     doctor = Doctor.objects.get(id=doctor_id)
     return render(request, 'doctor_dashboard.html', {'doctor': doctor})
 
