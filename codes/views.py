@@ -155,21 +155,21 @@ def billing_api(request):
 def doctor_dashboard(request):
     doctor_id = request.session.get('doctor_id')
     if not doctor_id:
-        return redirect('doctor_login')  # Redirect if not logged in
+        return redirect('login_view')  # Redirect if not logged in
     doctor = Doctor.objects.get(id=doctor_id)
     return render(request, 'doctor_dashboard.html', {'doctor': doctor})
 
 def patient_dashboard(request):
     patient_id = request.session.get('patient_id')
     if not patient_id:
-        return redirect('patient_login')  # Redirect if not logged in
+        return redirect('login_view')  # Redirect if not logged in
 
     patient = Patient.objects.get(id=patient_id)
     return render(request, 'patient_dashboard.html', {'patient': patient})
 
 def logout_view(request):
     request.session.flush()
-    return redirect('home')
+    return redirect('login_view')
 
 
 def login_view(request):

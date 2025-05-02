@@ -2,12 +2,11 @@
 {% block content %}
 <h2>Welcome to the Doctor Dashboard</h2>
 
-<p>Hello, {{ request.session.doctor_id }}! You are logged in successfully.</p>
+<p>Hello, {{ request.session.doctor.name }}! You are logged in successfully.</p>
 
 <ul>
   <li><a href="{% url 'patient_list_api' %}">View All Patients</a></li>
-  <!--here should be appointment code appearance-->
-  <li><a href="{% url 'approve_appointment' appointment.id %}">View Appointment</a></li>
+  <li><a href="{% url 'add_patient' %}">Add patient</a></li>
+  <li><a href="{% url 'logout_view' %}">Logout</a></li>
 </ul>
-
 {% endblock %}
