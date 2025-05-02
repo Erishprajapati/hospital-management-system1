@@ -14,6 +14,7 @@ urlpatterns = [
     # path('patient_login', views.patient_login, name = 'patient_login'),
     # path('doctor_login', views.doctor_login, name = 'doctor_login'),
     path('doctor_dashboard', views.doctor_dashboard, name = 'doctor_dashboard'),
+    path('accounts/login/doctor_shift', views.doctor_shift, name = 'doctor_shift'),
     path('patient_dashboard', views.patient_dashboard, name = 'patient_dashboard'),
     path('login_view', views.login_view, name = "login_view"),
     path('logout_view', views.logout_view, name ='logout_view'),

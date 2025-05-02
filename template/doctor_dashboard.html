@@ -1,12 +1,103 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h2>Welcome to the Doctor Dashboard</h2>
+<div class="dashboard-container">
+    <h2 class="dashboard-title">Welcome to the Doctor Dashboard</h2>
 
-<p>Hello, {{ request.session.doctor.name }}! You are logged in successfully.</p>
+    <p class="greeting">Hello, {{ request.session.doctor.name }}! You are logged in successfully.</p>
 
-<ul>
-  <li><a href="{% url 'patient_list_api' %}">View All Patients</a></li>
-  <li><a href="{% url 'add_patient' %}">Add patient</a></li>
-  <li><a href="{% url 'logout_view' %}">Logout</a></li>
-</ul>
+    <div class="dashboard-links">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <a href="{% url 'patient_list_api' %}" class="dashboard-link">View All Patients</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'add_patient' %}" class="dashboard-link">Add Patient</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'doctor_shift' %}" class="dashboard-link">Manage Shifts</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'logout_view' %}" class="dashboard-link">Logout</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<style>
+  /* Dashboard container */
+.dashboard-container {
+    max-width: 800px;
+    margin: 70px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+}
+
+.greeting {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #555;
+}
+
+.dashboard-links ul {
+    padding-left: 0;
+    list-style: none;
+}
+
+.list-group-item {
+    border: none;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s;
+}
+
+.list-group-item:hover {
+    background-color: #e0f7fa;
+}
+
+.dashboard-link {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 18px;
+    font-weight: 500;
+    display: block;
+    text-align: center;
+}
+
+.dashboard-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+body {
+    background: linear-gradient(to right, #f1f8e9, #ffffff);
+}
+
+/* Custom styles for logout button */
+.btn-logout {
+    background-color: #ff4c4c;
+    color: white;
+    border-radius: 8px;
+    padding: 10px;
+    border: none;
+    text-align: center;
+    font-size: 16px;
+}
+
+.btn-logout:hover {
+    background-color: #e63946;
+}
+</style>
 {% endblock %}

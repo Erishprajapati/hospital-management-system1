@@ -1,6 +1,93 @@
-<h2>Register Patient</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-</form>
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="form-container">
+    <h2 class="form-title">Register Patient</h2>
+
+    <form method="POST" class="patient-form">
+        {% csrf_token %}
+        
+        <!-- Display form fields -->
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        
+        <button type="submit" class="submit-btn">Submit</button>
+    </form>
+</div>
+<style>
+    /* Form container */
+.form-container {
+    max-width: 800px;
+    margin: 70px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.patient-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #007bff;
+    background-color: #fff;
+}
+
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+    font-size: 18px;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.submit-btn:active {
+    background-color: #00408b;
+}
+
+body {
+    background: linear-gradient(to right, #e0f7fa, #ffffff);
+}
+
+</style>
+{% endblock %}

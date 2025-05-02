@@ -16,7 +16,7 @@ def home(request):
     elif request.session.get('doctor_id'):
         return redirect('login_view')
     else:
-        return render(request, 'home.html')
+        return redirect('login_view')
 
 def success_page(request):
     return render(request, 'success.html') # Renders success.html page
@@ -67,7 +67,7 @@ def patient_register(request):
             # patient.password = make_password(form.cleaned_data['password'])  # hash password
             patient.save()
             messages.success(request, "Registration successful!")
-            return redirect('patient_login')
+            return redirect('patient_dashboard')
     else:
         form = PatientRegistrationForm()
     return render(request, 'patient_register.html', {'form': form})
@@ -109,7 +109,7 @@ def book_appointment(request):
         # # Extract POST data
         
         appointment_date = request.POST.get('appointment_date')
-        appointment_time = request.POST.get('appointment_time')
+        appointment_time_start = request.POST.get('appointment_time_start')
         doctor_id = request.POST.get('doctor')
         reason = request.POST.get('reason_for_visit')
         notes = request.POST.get('notes')
@@ -133,7 +133,7 @@ def book_appointment(request):
             patient=patient,
             doctor_id=doctor_id,
             appointment_date=appointment_date,
-            appointment_time=appointment_time,
+            appointment_time_start=appointment_time_start,
             reason_for_visit=reason,
             notes=notes
         )
@@ -158,6 +158,31 @@ def doctor_dashboard(request):
         return redirect('login_view')  # Redirect if not logged in
     doctor = Doctor.objects.get(id=doctor_id)
     return render(request, 'doctor_dashboard.html', {'doctor': doctor})
+
+@login_required
+def doctor_shift(request):
+    if request.method == "POST":
+        patient_id = request.POST.get('patient')
+        appointment_date = request.POST.get("appointment_date")
+        appointment_time_start = request.POST.get("appointment_time_start")
+        appointment_time_end = request.POST.get("appointment_time_end")
+
+        try:
+            patient = Patient.objects.get(id=patient_id)
+            Appointment.objects.create(
+                patient=patient,
+                appointment_date=appointment_date,
+                appointment_time_start=appointment_time_start,
+                appointment_time_end=appointment_time_end
+            )
+            messages.success(request, "Shift has been updated")
+            return redirect('doctor_dashboard')
+        except Patient.DoesNotExist:
+            messages.error(request, "Patient not found")
+            return redirect('doctor_shift')
+
+    return render(request, 'doctor_shift.html') 
+
 
 def patient_dashboard(request):
     patient_id = request.session.get('patient_id')
@@ -201,3 +226,4 @@ def login_view(request):
                 messages.error(request, "Doctor not found")
 
     return render(request, 'login.html')
+

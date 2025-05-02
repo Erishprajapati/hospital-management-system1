@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Set Doctor Shift</h2>
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <label for="patient">Select Patient:</label>
+    <select name="patient" id="patient" required>
+        {% for p in patients %}
+            <option value="{{ p.id }}">{{ p.name }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label for="appointment_date">Appointment Date:</label>
+    <input type="date" name="appointment_date" required><br><br>
+
+    <label for="appointment_time_start">Start Time:</label>
+    <input type="time" name="appointment_time_start" required><br><br>
+
+    <label for="appointment_time_end">End Time:</label>
+    <input type="time" name="appointment_time_end" required><br><br>
+
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}
