@@ -55,8 +55,16 @@ def list_patient_api(request):
 
 @api_view(['GET'])
 def list_doctor_api(request):
+    print("User:", request.user)
+    print("Is superuser:", request.user.is_superuser)
+    
     doctors = Doctor.objects.all()
-    serializer = DoctorSerializer(doctors, many = True)
+    
+    if request.user.is_superuser:
+        serializer = FullDoctorSerializer(doctors, many=True)
+    else:
+        serializer = PublicDoctorSerializer(doctors, many=True)
+    
     return Response(serializer.data)
 
 def patient_register(request):
@@ -100,13 +108,13 @@ def approve_appointment(request, appointment_id):
 @login_required
 def book_appointment(request):
     if request.method == "POST":
-        # try:
-        #     patient = Patient.objects.get(user=request.user)  # Assuming OneToOneField with User
-        # except Patient.DoesNotExist:
-        #     messages.error(request, "Patient not found.")
-        #     return redirect('patient_dashboard')
+        try:
+            patient = Patient.objects.get(user=request.user)  # Assuming OneToOneField with User
+        except Patient.DoesNotExist:
+            messages.error(request, "Patient not found.")
+            return redirect('patient_dashboard')
 
-        # # Extract POST data
+        # Extract POST data
         
         appointment_date = request.POST.get('appointment_date')
         appointment_time_start = request.POST.get('appointment_time_start')
@@ -116,17 +124,17 @@ def book_appointment(request):
         patient = Patient.objects.get(user=request.user) 
         
 
-        # # Validate date format
-        # try:
-        #     appointment_date = datetime.strptime(appointment_date_str, "%Y-%m-%d").date()
-        # except ValueError:
-        #     messages.error(request, "Invalid date format. Please select a valid date.")
-        #     return render(request, 'add_appointment.html')
+        # Validate date format
+        try:
+            appointment_date = datetime.strptime(appointment_date, "%Y-%m-%d").date()
+        except ValueError:
+            messages.error(request, "Invalid date format. Please select a valid date.")
+            return render(request, 'add_appointment.html')
 
         # Check for past date
-        # if appointment_date < datetime.now().date():
-        #     messages.error(request, "You cannot select a past date for the appointment.")
-        #     return render(request, 'add_appointment.html')
+        if appointment_date < datetime.now().date():
+            messages.error(request, "You cannot select a past date for the appointment.")
+            return render(request, 'add_appointment.html')
 
         # Save appointment
         Appointment.objects.create(
@@ -159,18 +167,17 @@ def doctor_dashboard(request):
     doctor = Doctor.objects.get(id=doctor_id)
     return render(request, 'doctor_dashboard.html', {'doctor': doctor})
 
-@login_required
 def doctor_shift(request):
     if request.method == "POST":
-        patient_id = request.POST.get('patient')
+        # patient_id = request.POST.get('patient')
         appointment_date = request.POST.get("appointment_date")
         appointment_time_start = request.POST.get("appointment_time_start")
         appointment_time_end = request.POST.get("appointment_time_end")
 
         try:
-            patient = Patient.objects.get(id=patient_id)
+            # patient = Patient.objects.get(id=patient_id)
             Appointment.objects.create(
-                patient=patient,
+                # patient=patient,
                 appointment_date=appointment_date,
                 appointment_time_start=appointment_time_start,
                 appointment_time_end=appointment_time_end
@@ -178,7 +185,7 @@ def doctor_shift(request):
             messages.success(request, "Shift has been updated")
             return redirect('doctor_dashboard')
         except Patient.DoesNotExist:
-            messages.error(request, "Patient not found")
+            messages.error(request, "Unable to update shift!! Try later")
             return redirect('doctor_shift')
 
     return render(request, 'doctor_shift.html') 

@@ -13,7 +13,7 @@ class Patient(models.Model):
     dateofbirth = models.DateField()
     gender = models.CharField(choices=gender_choices, max_length=10)
     phone = models.CharField(max_length=15)
-    email = models.EmailField(unique = True)
+    email = models.EmailField()
     password = models.CharField(max_length=100)
     address = models.CharField(max_length=20)
     emergency_contact = models.CharField(max_length=15)
@@ -28,7 +28,7 @@ class Doctor(models.Model):
     name = models.CharField(max_length=100)
     specialization = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
-    email = models.EmailField(unique = True)
+    email = models.EmailField()
     password = models.CharField(max_length=100)
     room_number = models.IntegerField()
     years_of_experience = models.IntegerField()
@@ -112,4 +112,8 @@ class Admission(models.Model):
     reason = models.CharField(max_length=100)
 
 
-    
+class shift(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete= models.CASCADE)
+    Date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()

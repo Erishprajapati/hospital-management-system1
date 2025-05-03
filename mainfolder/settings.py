@@ -130,5 +130,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = '/custom_login/'
-LOGIN_REDIRECT_URL = '/doctor_shift'
+# LOGIN_URL = '/custom_login/'
+# LOGIN_REDIRECT_URL = '/doctor_shift'
