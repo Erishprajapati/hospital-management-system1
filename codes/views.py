@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from .models import *
 from .forms import *
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from .serializers import *
 from django.contrib.auth.decorators import login_required
@@ -117,7 +118,7 @@ def book_appointment(request):
         # Extract POST data
         
         appointment_date = request.POST.get('appointment_date')
-        appointment_time_start = request.POST.get('appointment_time_start')
+        appointment_time = request.POST.get('appointment_time')
         doctor_id = request.POST.get('doctor')
         reason = request.POST.get('reason_for_visit')
         notes = request.POST.get('notes')
@@ -141,13 +142,13 @@ def book_appointment(request):
             patient=patient,
             doctor_id=doctor_id,
             appointment_date=appointment_date,
-            appointment_time_start=appointment_time_start,
+            appointment_time=appointment_time,
             reason_for_visit=reason,
             notes=notes
         )
 
         messages.success(request, "Appointment booked successfully!")
-        return redirect('doctor_dashboard')
+        return redirect('patient_dashboard')
 
     else:
         form = AppointmentForm(initial={'patient': request.user.id})
@@ -167,37 +168,56 @@ def doctor_dashboard(request):
     doctor = Doctor.objects.get(id=doctor_id)
     return render(request, 'doctor_dashboard.html', {'doctor': doctor})
 
+
+@login_required
 def doctor_shift(request):
     if request.method == "POST":
-        # patient_id = request.POST.get('patient')
-        appointment_date = request.POST.get("appointment_date")
-        appointment_time_start = request.POST.get("appointment_time_start")
-        appointment_time_end = request.POST.get("appointment_time_end")
+        available_date = request.POST.get("appointment_date")
+        available_time_start = request.POST.get("appointment_time_start")
+        available_time_end = request.POST.get("appointment_time_end")
 
         try:
-            # patient = Patient.objects.get(id=patient_id)
-            Appointment.objects.create(
-                # patient=patient,
-                appointment_date=appointment_date,
-                appointment_time_start=appointment_time_start,
-                appointment_time_end=appointment_time_end
-            )
+            # Get the current logged-in doctor using the user ID
+            doctor = get_object_or_404(Doctor, user=request.user)
+
+            # Update shift fields
+            doctor.available_date = available_date
+            doctor.available_time_start = available_time_start
+            doctor.available_time_end = available_time_end
+            doctor.save()
+
             messages.success(request, "Shift has been updated")
             return redirect('doctor_dashboard')
-        except Patient.DoesNotExist:
+        except Exception as e:
+            print("Error:", e)
             messages.error(request, "Unable to update shift!! Try later")
             return redirect('doctor_shift')
 
-    return render(request, 'doctor_shift.html') 
+    print(f"Logged-in user ID: {request.user.id}")
+    return render(request, 'doctor_shift.html')
 
+# def patient_dashboard(request):
+#     patient_id = request.session.get('patient_id')
+#     if not patient_id:
+#         return redirect('login_view')  # Redirect if not logged in
 
+#     patient = Patient.objects.get(id=patient_id)
+#     return render(request, 'patient_dashboard.html', {'patient': patient})
+
+@login_required
 def patient_dashboard(request):
-    patient_id = request.session.get('patient_id')
-    if not patient_id:
-        return redirect('login_view')  # Redirect if not logged in
+    try:
+        patient = Patient.objects.get(user=request.user)
+    except Patient.DoesNotExist:
+        messages.error(request, "Patient not found.")
+        return redirect('home')  # or another fallback view
 
-    patient = Patient.objects.get(id=patient_id)
-    return render(request, 'patient_dashboard.html', {'patient': patient})
+    appointments = Appointment.objects.filter(patient=patient).order_by('-appointment_date', '-appointment_time')
+
+    return render(request, 'patient_dashboard.html', {
+        'appointments': appointments,
+    })
+
 
 def logout_view(request):
     request.session.flush()

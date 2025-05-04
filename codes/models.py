@@ -25,6 +25,7 @@ class Patient(models.Model):
         return f"{self.name}- {self.gender}- {self.blood_group}"
 
 class Doctor(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Allow null
     name = models.CharField(max_length=100)
     specialization = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
