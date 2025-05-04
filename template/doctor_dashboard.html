@@ -18,7 +18,11 @@
                 <a href="{% url 'doctor_shift' %}" class="dashboard-link">Manage Shifts</a>
             </li>
             <li class="list-group-item">
+                <a href="{% url 'approve_appointment' appointment.id %}" class="dashboard-link">Approve Appointment #{{ appointment.id }}</a>
+            </li>
+            <li class="list-group-item">
                 <a href="{% url 'logout_view' %}" class="dashboard-link">Logout</a>
+            </li>
             </li>
         </ul>
     </div>

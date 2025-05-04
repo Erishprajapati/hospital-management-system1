@@ -4,7 +4,7 @@
 <h2>Welcome to the Dashboard</h2>
 
 {% if request.session.patient_id %}
-    <p>Hello, patient! You are logged in successfully.</p>
+    <p>Hello {{ request.session.patient_id }}! You are logged in successfully.</p>
 
     <h4>All Available Doctors:</h4>
     <ul id="doctor-list">
