@@ -32,7 +32,8 @@ SECRET_KEY = 'django-insecure-il&2kjkh6f9^#etunvkacp^tzhr5i=0_e-l_m&)k!exg)8rs00
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = ['irishprajapati.pythonanywhere.com']
+
 
 
 # Application definition
@@ -135,12 +136,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # LOGIN_URL = '/custom_login/'
 # LOGIN_REDIRECT_URL = '/doctor_shift'
-# LOGIN_URL = '/login_view'
-
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
+MEDIA_URLS ='/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# WhiteNoise for serving static files
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# Also Make aure To set allowed_hosts to '*'
+
+ALLOWED_HOSTS = ['*']
+
 
 # For production, add this to serve static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
