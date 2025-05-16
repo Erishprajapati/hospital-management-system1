@@ -33,10 +33,20 @@ def add_patient(request):
     if request.method == 'POST':
         form = PatientForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('success_page')
+            email = form.cleaned_data['email']
+            phone = form.cleaned_data['phone']
+
+            # Check for existing email or phone number
+            if Patient.objects.filter(email=email).exists():
+                messages.error(request, 'A patient with this email already exists.')
+            elif Patient.objects.filter(phone=phone).exists():
+                messages.error(request, 'A patient with this phone number already exists.')
+            else:
+                form.save()
+                return redirect('success_page')
     else:
         form = PatientForm()
+        
     return render(request, 'add_patient.html', {'form': form})
 
 def doctor_info(request):

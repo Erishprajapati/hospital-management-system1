@@ -25,12 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
-
-SECRET_KEY = 'django-insecure-il&2kjkh6f9^#etunvkacp^tzhr5i=0_e-l_m&)k!exg)8rs00'
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-il&2kjkh6f9^#etunvkacp^tzhr5i=0_e-l_m&)k!exg)8rs00')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 #ALLOWED_HOSTS = ['irishprajapati.pythonanywhere.com']
 
@@ -84,14 +82,10 @@ WSGI_APPLICATION = 'mainfolder.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hms',                # Your database name
-        'USER': 'postgres',       # Your PostgreSQL username
-        'PASSWORD': '4696', # Your PostgreSQL password
-        'HOST': 'localhost',          # Or use '127.0.0.1'
-        'PORT': '5432',               # Default PostgreSQL port
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL', default='postgres://postgres:4696@localhost:5432/hms'),
+        conn_max_age=600
+    )
 }
 
 # Password validation
@@ -138,7 +132,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # LOGIN_REDIRECT_URL = '/doctor_shift'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
-MEDIA_URLS ='/media/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Also Make aure To set allowed_hosts to '*'
