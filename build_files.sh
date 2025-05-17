@@ -6,8 +6,10 @@ echo "BUILD START"
 python -m pip install --upgrade pip setuptools wheel
 python -m pip install -r requirements.txt
 
-# Create staticfiles_build directory if it doesn't exist
+# Create necessary directories
 mkdir -p staticfiles_build/public
+mkdir -p staticfiles_build/static
+mkdir -p staticfiles_build/media
 
 # Run database migrations
 python manage.py migrate
@@ -15,7 +17,7 @@ python manage.py migrate
 # Collect static files
 python manage.py collectstatic --noinput --clear
 
-# Ensure static files are in the correct location
+# Copy static files to public directory
 if [ -d "staticfiles_build/static" ]; then
     cp -r staticfiles_build/static/* staticfiles_build/public/
 fi

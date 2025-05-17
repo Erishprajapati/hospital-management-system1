@@ -21,7 +21,19 @@
       {
         "src": "/static/(.*)",
         "dest": "/static/$1"
-    },
+      },
+      {
+        "src": "/media/(.*)",
+        "dest": "/media/$1"
+      },
+      {
+        "src": "/admin/(.*)",
+        "dest": "mainfolder/wsgi.py"
+      },
+      {
+        "src": "/api/(.*)",
+        "dest": "mainfolder/wsgi.py"
+      },
       {
         "src": "/(.*)",
         "dest": "mainfolder/wsgi.py"

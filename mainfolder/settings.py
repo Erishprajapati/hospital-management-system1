@@ -82,18 +82,29 @@ WSGI_APPLICATION = 'mainfolder.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Get database URL from environment variable
-DATABASE_URL = config('DATABASE_URL', default='postgres://postgres:4696@localhost:5432/hms')
-
-# Configure database
-DATABASES = {
-    'default': dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True
-    )
-}
+if DEBUG:
+    # Local development database settings
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'hms',
+            'USER': 'postgres',
+            'PASSWORD': '4696',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
+else:
+    # Production database settings
+    DATABASE_URL = config('DATABASE_URL', default='postgres://postgres:4696@localhost:5432/hms')
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True
+        )
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
