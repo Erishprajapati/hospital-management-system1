@@ -5,7 +5,7 @@
         "src": "mainfolder/wsgi.py",
         "use": "@vercel/python",
         "config": {
-          "runtime": "python3.12",
+          "runtime": "python3.9",
           "buildCommand": "pip install -r requirements.txt"
         }
       },
