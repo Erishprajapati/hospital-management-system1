@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-il&2kjkh6f9^#etunvkacp^tzhr5i=0_e-l_m&)k!exg)8rs00')
+SECRET_KEY = config('DJANGO_SECRET_KEY', default='django-insecure-il&2kjkh6f9^#etunvkacp^tzhr5i=0_e-l_m&)k!exg)8rs00')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
@@ -81,10 +81,17 @@ WSGI_APPLICATION = 'mainfolder.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
+# Get database URL from environment variable
+DATABASE_URL = config('DATABASE_URL', default='postgres://postgres:4696@localhost:5432/hms')
+
+# Configure database
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL', default='postgres://postgres:4696@localhost:5432/hms'),
-        conn_max_age=600
+        default=DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=True
     )
 }
 
@@ -143,3 +150,14 @@ ALLOWED_HOSTS = ['*']
 
 # For production, add this to serve static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Security settings for production
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
