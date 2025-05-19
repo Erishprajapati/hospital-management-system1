@@ -35,6 +35,14 @@
         "dest": "mainfolder/wsgi.py"
       },
       {
+        "src": "/swagger/(.*)",
+        "dest": "mainfolder/wsgi.py"
+      },
+      {
+        "src": "/redoc/(.*)",
+        "dest": "mainfolder/wsgi.py"
+      },
+      {
         "src": "/(.*)",
         "dest": "mainfolder/wsgi.py"
       }
