@@ -27,10 +27,40 @@ def root_view(request):
     return JsonResponse({
         "message": "Welcome to Hospital Management System API",
         "endpoints": {
-            "admin": "/admin/",
-            "api": "/api/v1/",
-            "swagger": "/api/v1/swagger/",
-            "redoc": "/api/v1/redoc/"
+            "admin": {
+                "url": "/admin/",
+                "description": "Django admin interface"
+            },
+            "api": {
+                "url": "/api/v1/",
+                "description": "Main API endpoints",
+                "available_endpoints": {
+                    "patients": {
+                        "list": "/api/v1/api/patients/",
+                        "add": "/api/v1/add_patient"
+                    },
+                    "doctors": {
+                        "list": "/api/v1/api/doctors/",
+                        "info": "/api/v1/doctorinfo/",
+                        "dashboard": "/api/v1/doctor_dashboard",
+                        "shift": "/api/v1/doctor_shift"
+                    },
+                    "appointments": {
+                        "list": "/api/v1/api/appointments",
+                        "book": "/api/v1/add-appointment/",
+                        "approve": "/api/v1/api/approve_appointment/<id>/"
+                    },
+                    "auth": {
+                        "login": "/api/v1/login_view",
+                        "logout": "/api/v1/logout_view",
+                        "register": "/api/v1/register_view"
+                    }
+                }
+            },
+            "documentation": {
+                "swagger": "/api/v1/swagger/",
+                "redoc": "/api/v1/redoc/"
+            }
         }
     })
 
