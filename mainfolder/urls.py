@@ -18,9 +18,21 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
+
+def root_view(request):
+    return JsonResponse({
+        "message": "Welcome to Hospital Management System API",
+        "endpoints": {
+            "admin": "/admin/",
+            "api": "/api/v1/",
+            "swagger": "/api/v1/swagger/",
+            "redoc": "/api/v1/redoc/"
+        }
+    })
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -36,6 +48,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path('', root_view, name='root'),
     path('admin/', admin.site.urls),
     path('api/v1/', include([
         path('', include('codes.urls')),
